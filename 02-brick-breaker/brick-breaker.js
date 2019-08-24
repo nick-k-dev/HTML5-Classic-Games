@@ -65,7 +65,6 @@ const checkForAndRemoveBrickAtPixelCoordinate = (pixelX, pixelY) => {
 //END BRICK LOGIC AND ARRAY FUNCTIONS****************
 
 
-
 //PADDLE AND BALL LOGIC***********************
 let ball = {
     x: 75,
