@@ -8,6 +8,7 @@ const BRICK = Object.freeze({
 });
 
 let bricksGrid = new Array(BRICK.COLUMNS * BRICK.ROWS);
+let bricksLeft = BRICK.COLUMNS * BRICK.ROWS;
 
 const drawBricks = () => {
     for(let column = 0; column < BRICK.COLUMNS; ++column){
@@ -24,7 +25,8 @@ const drawBricks = () => {
 };//end drawBricks
 
 const resetBricks = () => {
-    for(let i = 0; i < BRICK.COLUMNS * BRICK.ROWS; ++i){
+    bricksLeft = BRICK.COLUMNS * BRICK.ROWS - BRICK.COLUMNS * 3;
+    for(let i = BRICK.COLUMNS * 3; i < BRICK.COLUMNS * BRICK.ROWS; ++i){
         bricksGrid[i] = 1;
     }
 };
@@ -48,17 +50,58 @@ const isBrickAtTileCoordinateVisible = (tileColumn, tileRow) => {
     return (bricksGrid[index] === 1);
 };
 
-const checkForAndRemoveBrickAtPixelCoordinate = (pixelX, pixelY) => {
+const removeBrickAndHandleBounceAtPixelCoordinate = (pixelX, pixelY) => {
     const column = Math.floor(pixelX / BRICK.WIDTH);
     const row = Math.floor(pixelY / BRICK.HEIGHT);
-    //check if the ball is out of bounds from the brick array and return if so
+
+    //return out of function, we aren't within the brick array bounds
     if(column < 0 || column >= BRICK.COLUMNS || row < 0 || row >= BRICK.ROWS) {
-        return false;
+        return;
     }
+
     const index = convertColumnRowToIndex(column, row);
-    let bounceBall = (bricksGrid[index] === 1);
-    bricksGrid[index] = 0;
-    return bounceBall;
+
+    //We hit a visible brick so handle it
+    if(bricksGrid[index] === 1) {
+        //check the position of the ball a frame earlier
+        const previousBallX = ball.x-ball.speedX;
+        const previousBallY = ball.y-ball.speedY;
+        const previousColumn = Math.floor(previousBallX / BRICK.WIDTH);
+        const previousRow = Math.floor(previousBallY / BRICK.HEIGHT);
+
+        let bothTestsFailed = true;
+
+        //we came in from the side because we aren't in the same column.
+        if(previousColumn != column){
+            const adjacentBrickIndex = convertColumnRowToIndex(previousColumn, previousRow);
+            //make sure the side we want to reflect off of isn't blocked by another brick
+            if(bricksGrid[adjacentBrickIndex] != 1){
+                ball.speedX *= -1;
+                bothTestsFailed = false;
+            }
+        }
+
+        //we came in vertically because we aren't in the same row.
+        if(previousRow != row) {
+            const adjacentBrickindex = convertColumnRowToIndex(previousColumn, previousRow);
+            //make sure the side we want to refelct off isn't blocked by another brick
+            if(bricksGrid[adjacentBrickindex] != 1){
+                ball.speedY *= -1;
+                bothTestsFailed = false;
+            }
+        }
+
+        //handle both tests failing We came from an inside corner where we had adjacent bricks flip both to avoid
+        //going into that next location
+        if(bothTestsFailed){
+            ball.speedX *= -1;
+            ball.speedY *= -1;
+        }
+
+        //Remove brick that was hit
+        --bricksLeft;
+        bricksGrid[index] = 0;
+    }
 };
 
 
@@ -82,6 +125,11 @@ let ball = {
                 let deltaX = this.x-(playerOne.x + PADDLE_WIDTH/2);
                 this.speedX = deltaX * 0.35;
                 this.shouldReset = false;
+                
+                //reset the game when there are no bricks left and we next touch the paddle.
+                if(bricksLeft === 0){
+                    resetBricks();
+                }
             }
             else if(this.y > canvas.height - BALL_TO_PADDLE_RATIO + PADDLE_HEIGHT) {
                 this.shouldReset = true;
@@ -129,10 +177,7 @@ const resetGame = () => {
 
 
 const moveEverything = () => {
-    if(checkForAndRemoveBrickAtPixelCoordinate(ball.x, ball.y)){
-        //ball.speedX *= -1;
-        ball.speedY *= -1;
-    }
+    removeBrickAndHandleBounceAtPixelCoordinate(ball.x, ball.y);
     ball.move();
 };
 
@@ -159,6 +204,10 @@ window.onload = () => {
     canvas.addEventListener('mousemove', (evt) => {
         let mousePos = calculateMousePos(evt);
         playerOne.x = mousePos.x - (PADDLE_WIDTH / 2);
+        
+        //uncomment if you need to test the game moving the mouse to move the ball
+        // ball.x = mousePos.x;
+        // ball.y = mousePos.y;
     });
 
     canvas.addEventListener('mousedown', (evt) => {
