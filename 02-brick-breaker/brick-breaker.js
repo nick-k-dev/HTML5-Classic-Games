@@ -4,21 +4,49 @@ const BRICK = Object.freeze({
     GAP: 2,
     COLUMNS: 10,
     ROWS: 14,
-    drawBricks: function(){
-        for(let column = 0; column < this.COLUMNS; ++column){
-            for(let row = 0; row < this.ROWS; ++row){
-                //compute the corner in pixel coordinates of the corresponding brick
-                //multiply the brick's title coordinate by WIDTH or HEIGHT for pixel
-                let brickLeftEdgeX = column * this.WIDTH;
-                let brickTopEdgeY = row * this.HEIGHT;
-                //draw a blue rectangle at that position, leaving a small margin for GAP
-                drawRect(brickLeftEdgeX, brickTopEdgeY, this.WIDTH - this.GAP, this.HEIGHT - this.GAP, 'blue');
-            }//end for
-        }//end for
-    }//end drawBricks
 });
 
-let brickGrid = new Array(BRICK.COLUMNS * BRICK_ROWS);
+let bricksGrid = new Array(BRICK.COLUMNS * BRICK.ROWS);
+
+const drawBricks = () => {
+    for(let column = 0; column < BRICK.COLUMNS; ++column){
+        for(let row = 0; row < BRICK.ROWS; ++row){
+            //only draw if the brick is visible(holds a 1 at the provided index)
+            if(isBrickAtTileCoordinate(column, row)){
+                let brickLeftEdgeX = column * BRICK.WIDTH;
+                let brickTopEdgeY = row * BRICK.HEIGHT;
+                //draw a blue rectangle at that position, leaving a small margin for GAP
+                drawRect(brickLeftEdgeX, brickTopEdgeY, BRICK.WIDTH - BRICK.GAP, BRICK.HEIGHT - BRICK.GAP, 'blue');
+            }//end if
+        }//end for
+    }//end for
+}//end drawBricks
+
+const resetBricks = () => {
+    for(let i = 0; i < BRICK.COLUMNS * BRICK.ROWS; ++i){
+        if(Math.random() < 0.5) {//only fill in half the bricks, to test display
+            bricksGrid[i] = 1;
+        }
+        else {
+            bricksGrid[i] = 0;
+        }
+    }
+};
+
+//will return true if 1(brick visible) false if 0(no brick)
+const isBrickAtTileCoordinate = (tileColumn, tileRow) => {
+    //example   if tileColumn = 4 and tileRow = 1
+    //          we move to index 3(for tileColumn) then take the length of columns(10)
+    //          and multiply by the number of rows(tileRow = 1 COLUMNS = 10 so total is 10) 
+    //          so we add 10 to 3 and get 13. 13 would be our index because we column 3 row 4
+    //          but represented in a 1d array instead of 2d 
+    //          0,   1,  2,  3,  4,  5,  6,  7,  8,  9
+    //          10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+    //          20, 21, 22, 23, 24, 25, 26, 27, 28, 29
+    const index = tileColumn + BRICK.COLUMNS * tileRow;
+    //check if the brick in the array index is visible(which is represented by 1)
+    return (bricksGrid[index] === 1);
+}
 
 
 //PADDLE AND BALL LOGIC***********************
@@ -103,6 +131,9 @@ window.onload = () => {
     playerOne.x = canvas.width / 2 - PADDLE_WIDTH / 2;
     playerOne.y = canvas.height - PADDLE_HEIGHT - PADDLE_Y_WALL_OFFSET;
 
+    //handle brickGrid calls
+    resetBricks();
+
     //sets up mousemove event listener which calls calculateMousePos and assigns back to paddle
     canvas.addEventListener('mousemove', (evt) => {
         let mousePos = calculateMousePos(evt);
@@ -154,7 +185,7 @@ const drawEverything = () => {
     drawRect(0, 0, canvas.width, canvas.height, 'black');
 
     //draw the bricks
-    BRICK.drawBricks();
+    drawBricks();
     
 
     //player one rect
