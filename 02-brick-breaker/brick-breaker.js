@@ -1,3 +1,27 @@
+const BRICK = Object.freeze({
+    WIDTH: 80,
+    HEIGHT: 20,
+    GAP: 2,
+    COLUMNS: 10,
+    ROWS: 14,
+    drawBricks: function(){
+        for(let column = 0; column < this.COLUMNS; ++column){
+            for(let row = 0; row < this.ROWS; ++row){
+                //compute the corner in pixel coordinates of the corresponding brick
+                //multiply the brick's title coordinate by WIDTH or HEIGHT for pixel
+                let brickLeftEdgeX = column * this.WIDTH;
+                let brickTopEdgeY = row * this.HEIGHT;
+                //draw a blue rectangle at that position, leaving a small margin for GAP
+                drawRect(brickLeftEdgeX, brickTopEdgeY, this.WIDTH - this.GAP, this.HEIGHT - this.GAP, 'blue');
+            }//end for
+        }//end for
+    }//end drawBricks
+});
+
+let brickGrid = new Array(BRICK.COLUMNS * BRICK_ROWS);
+
+
+//PADDLE AND BALL LOGIC***********************
 let ball = {
     x: 75,
     y: 75,
@@ -46,26 +70,6 @@ let ball = {
     }
 }
 
-const BRICK = Object.freeze({
-    WIDTH: 80,
-    HEIGHT: 20,
-    GAP: 2,
-    COLUMNS: 10,
-    ROWS: 14,
-    drawBricks: function(){
-        for(let column = 0; column < this.COLUMNS; ++column){
-            for(let row = 0; row < this.ROWS; ++row){
-                //compute the corner in pixel coordinates of the corresponding brick
-                //multiply the brick's title coordinate by WIDTH or HEIGHT for pixel
-                let brickLeftEdgeX = column * this.WIDTH;
-                let brickTopEdgeY = row * this.HEIGHT;
-                //draw a blue rectangle at that position, leaving a small margin for GAP
-                drawRect(brickLeftEdgeX, brickTopEdgeY, this.WIDTH - this.GAP, this.HEIGHT - this.GAP, 'blue');
-            }//end for
-        }//end for
-    }//end drawBricks
-});
-
 const PADDLE_HEIGHT = 15, PADDLE_WIDTH = 100, PADDLE_Y_WALL_OFFSET = 50;
 const BALL_TO_PADDLE_RATIO = PADDLE_HEIGHT + PADDLE_Y_WALL_OFFSET + ball.radius;
 const FORGIVENESS_MARGIN = 4;
@@ -75,9 +79,22 @@ let playerOne = {
     score: 0
 };
 
+const resetGame = () => {
+    ball.resetPos();
+};
+
+
+const moveEverything = () => {
+    ball.move();
+};
+
+//ENDPADDLE AND BALL LOGIC***********************
+
+
+
+//CANVAS, EVENTS AND ONLOAD SETUP********************
 let canvas;
 let canvasContext;
-
 window.onload = () => {
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext('2d');    
@@ -103,10 +120,6 @@ window.onload = () => {
     }, 1000/framesPerSecond);
 }
 
-const resetGame = () => {
-    ball.resetPos();
-};
-
 const calculateMousePos = (evt) => {
     const rect = canvas.getBoundingClientRect(), root = document.documentElement;
 
@@ -119,11 +132,10 @@ const calculateMousePos = (evt) => {
         y: mouseY
     };
 };
+//END CANVAS AND ONLOAD SETUP********************
 
-const moveEverything = () => {
-    ball.move();
-};
 
+//DRAW CALLS*************************
 const drawRect = (topLeftX, topLeftY, boxWidth, boxHeight, fillColor) => {
     canvasContext.fillStyle = fillColor;
     canvasContext.fillRect(topLeftX, topLeftY, boxWidth, boxHeight);
@@ -151,3 +163,4 @@ const drawEverything = () => {
     //playerBall
     drawCircle(ball.x, ball.y, ball.radius, 'white');
 };
+//END DRAW CALLS*************************
