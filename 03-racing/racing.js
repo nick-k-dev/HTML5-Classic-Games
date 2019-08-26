@@ -1,3 +1,13 @@
+//KEYBORAD CONSTANTS**********
+const KEY = Object.freeze({
+    LEFT_ARROW: 37,
+    UP_ARROW: 38,
+    RIGHT_ARROW: 39,
+    DOWN_ARROW: 40
+});
+//END KEYBOARD CONSTANTS*****************
+
+
 //TRACK LOGIC AND ARRAY FUNCTIONS****************
 const TRACK = Object.freeze({
     WIDTH: 40,
@@ -117,34 +127,19 @@ const bounceOffTrackAtPixelCoordinate = (pixelX, pixelY) => {
 let car = {
     x: 75,
     y: 75,
-    speedX: 10,
-    speedY: 6,
-    radius: 10,
+    speed: 0,
     angle: 0,
     picLoaded:false,
     move: function() {
-
-        if(this.y > canvas.height){
-            this.resetPos();
-        }
-
-        if(this.y < 0 + this.radius){
-            this.speedY *= -1;
-        }
-
-        if(this.x < 0 + this.radius || this.x > canvas.width - this.radius){
-            this.speedX *= -1;
-        }
-
         //move the car
-        this.x += this.speedX;
-        this.y += this.speedY;
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed;
     },
     resetPos: function(){
-        this.x = canvas.width / 2 + 150;
+        this.x = canvas.width / 2;
         this.y = canvas.height / 2;
-        this.speedX *= -1;
-        this.speedY *= -1;
+        this.speed *= -1;
+        this.speed *= -1;
     }
 };
 
@@ -165,6 +160,33 @@ const moveEverything = () => {
 
 
 
+//********LISTENER CALLBACKS
+const keyPressed = (evt) => {
+    document.getElementById('debugText').innerHTML = "KeyCode Pushed: " + evt.keyCode;
+
+    if(evt.keyCode === KEY.UP_ARROW) {
+        car.speed += 1.5;
+    }
+    if(evt.keyCode === KEY.DOWN_ARROW){
+        car.speed -= 1.5;
+    }
+    if(evt.keyCode === KEY.LEFT_ARROW){
+        car.angle -= 0.25 * Math.PI;
+    }
+    if(evt.keyCode === KEY.RIGHT_ARROW){
+        car.angle += 0.25 * Math.PI;
+    }
+
+    evt.preventDefault();
+}
+
+const keyReleased = (evt) => {
+    document.getElementById('debugText').innerHTML = "KeyCode Released: " + evt.keyCode;
+}
+//*********END LISTENER CALLBAKCKS
+
+
+
 //CANVAS, EVENTS AND ONLOAD SETUP********************
 let canvas;
 let canvasContext;
@@ -175,10 +197,13 @@ window.onload = () => {
     carPic.onload = function() {
         car.picLoaded = true;//don't display image until loaded.
     }
-
     carPic.src = 'player1.png';
-
     car.resetPos();
+
+    //listeners
+    document.addEventListener('keydown', keyPressed);
+    document.addEventListener('keyup', keyReleased);
+
 
     const framesPerSecond = 30;
     setInterval(()=>{
@@ -213,7 +238,6 @@ const drawBitmapCenteredAtLocationWithRotation = (graphic, x, y, angle) => {
 
 const drawCar = () => {
     if(car.picLoaded) {
-        car.angle += 0.2;
         drawBitmapCenteredAtLocationWithRotation(carPic, car.x, car.y, car.angle);
     }
 }
