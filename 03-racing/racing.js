@@ -1,11 +1,19 @@
-//KEYBORAD CONSTANTS**********
+//KEYBORAD CONSTANTS AND CHECKS**********
 const KEY = Object.freeze({
     LEFT_ARROW: 37,
     UP_ARROW: 38,
     RIGHT_ARROW: 39,
     DOWN_ARROW: 40
 });
-//END KEYBOARD CONSTANTS*****************
+
+let keyHeld = {
+    gas: false,
+    reverse: false,
+    left: false,
+    right: false
+};
+
+//END KEYBOARD CONSTANTS AND CHECKS*****************
 
 
 //TRACK LOGIC AND ARRAY FUNCTIONS****************
@@ -19,7 +27,8 @@ const TRACK = Object.freeze({
 
 //20 by 15 array grid to visually represent the map
 let	tracksGrid =
-[	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,
+[	
+    1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,
     1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,
     1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	1,	1,	1,
     1,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,
@@ -33,7 +42,8 @@ let	tracksGrid =
     1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,
     1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,
     1,	0,	0,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,
-    1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1];
+    1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1
+];
 
 const drawTracks = () => {
     for(let column = 0; column < TRACK.COLUMNS; ++column){
@@ -153,6 +163,18 @@ const resetGame = () => {
 
 const moveEverything = () => {
     bounceOffTrackAtPixelCoordinate(car.x, car.y);
+    if(keyHeld.gas) {
+        car.speed += 0.5;
+    }
+    if(keyHeld.reverse){
+        car.speed -= 0.5;
+    }
+    if(keyHeld.left){
+        car.angle += -0.03 * Math.PI;
+    }
+    if(keyHeld.right){
+        car.angle += 0.03 * Math.PI;
+    }
     car.move();
 };
 
@@ -162,26 +184,36 @@ const moveEverything = () => {
 
 //********LISTENER CALLBACKS
 const keyPressed = (evt) => {
-    document.getElementById('debugText').innerHTML = "KeyCode Pushed: " + evt.keyCode;
-
+    
     if(evt.keyCode === KEY.UP_ARROW) {
-        car.speed += 1.5;
+        keyHeld.gas = true;
     }
     if(evt.keyCode === KEY.DOWN_ARROW){
-        car.speed -= 1.5;
+        keyHeld.reverse = true;
     }
     if(evt.keyCode === KEY.LEFT_ARROW){
-        car.angle -= 0.25 * Math.PI;
+        keyHeld.left = true;
     }
     if(evt.keyCode === KEY.RIGHT_ARROW){
-        car.angle += 0.25 * Math.PI;
+        keyHeld.right = true;
     }
 
     evt.preventDefault();
 }
 
 const keyReleased = (evt) => {
-    document.getElementById('debugText').innerHTML = "KeyCode Released: " + evt.keyCode;
+    if(evt.keyCode === KEY.UP_ARROW) {
+        keyHeld.gas = false;
+    }
+    if(evt.keyCode === KEY.DOWN_ARROW){
+        keyHeld.reverse = false;
+    }
+    if(evt.keyCode === KEY.LEFT_ARROW){
+        keyHeld.left = false;
+    }
+    if(evt.keyCode === KEY.RIGHT_ARROW){
+        keyHeld.right = false;
+    }
 }
 //*********END LISTENER CALLBAKCKS
 
