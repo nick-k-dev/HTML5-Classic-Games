@@ -7,7 +7,23 @@ const TRACK = Object.freeze({
     ROWS: 15
 });
 
-let tracksGrid = new Array(TRACK.COLUMNS * TRACK.ROWS);
+//20 by 15 array grid to visually represent the map
+let	tracksGrid =
+[	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,
+    1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,
+    1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	1,	1,	1,
+    1,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,
+    1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,
+    1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	1,
+    1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	1,	1,
+    1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	1,	1,
+    1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	1,	1,
+    1,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	1,
+    1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	1,
+    1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,
+    1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,
+    1,	0,	0,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,
+    1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1];
 
 const drawTracks = () => {
     for(let column = 0; column < TRACK.COLUMNS; ++column){
@@ -22,12 +38,6 @@ const drawTracks = () => {
         }//end for
     }//end for
 };//end drawTracks
-
-const resetTracks = () => {
-    for(let i = TRACK.COLUMNS * 0; i < TRACK.COLUMNS * TRACK.ROWS; ++i){
-        tracksGrid[i] = 1;
-    }
-};
 
 const convertColumnRowToIndex = (column, row) => {
     //example   if column = 4 and row = 1
@@ -48,7 +58,7 @@ const isTrackAtTileCoordinateVisible = (tileColumn, tileRow) => {
     return (tracksGrid[index] === 1);
 };
 
-const removeTrackAndHandleBounceAtPixelCoordinate = (pixelX, pixelY) => {
+const bounceOffTrackAtPixelCoordinate = (pixelX, pixelY) => {
     const column = Math.floor(pixelX / TRACK.WIDTH);
     const row = Math.floor(pixelY / TRACK.HEIGHT);
 
@@ -96,8 +106,6 @@ const removeTrackAndHandleBounceAtPixelCoordinate = (pixelX, pixelY) => {
             car.speedY *= -1;
         }
 
-        //Remove track that was hit
-        tracksGrid[index] = 0;
     }
 };
 
@@ -112,6 +120,8 @@ let car = {
     speedX: 10,
     speedY: 6,
     radius: 10,
+    angle: 0,
+    picLoaded:false,
     move: function() {
 
         if(this.y > canvas.height){
@@ -131,12 +141,15 @@ let car = {
         this.y += this.speedY;
     },
     resetPos: function(){
-        this.x = canvas.width / 2;
+        this.x = canvas.width / 2 + 150;
         this.y = canvas.height / 2;
         this.speedX *= -1;
         this.speedY *= -1;
     }
 };
+
+let carPic = document.createElement('img');
+
 
 const resetGame = () => {
     car.resetPos();
@@ -144,7 +157,7 @@ const resetGame = () => {
 
 
 const moveEverything = () => {
-    removeTrackAndHandleBounceAtPixelCoordinate(car.x, car.y);
+    bounceOffTrackAtPixelCoordinate(car.x, car.y);
     car.move();
 };
 
@@ -159,8 +172,12 @@ window.onload = () => {
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext('2d');
 
-    //handle tracksGrid calls
-    resetTracks();
+    carPic.onload = function() {
+        car.picLoaded = true;//don't display image until loaded.
+    }
+
+    carPic.src = 'player1.png';
+
     car.resetPos();
 
     const framesPerSecond = 30;
@@ -186,6 +203,21 @@ const drawCircle = (centerX, centerY, radius, fillColor) => {
     canvasContext.fill();
 };
 
+const drawBitmapCenteredAtLocationWithRotation = (graphic, x, y, angle) => {
+    canvasContext.save();//allows us to undo translate movement and rotate spin
+    canvasContext.translate(x, y); //sets the point where our graphic will go
+    canvasContext.rotate(angle); // sets the rotation
+    canvasContext.drawImage(graphic, -graphic.width/2, -graphic.height/2); //center, draw
+    canvasContext.restore();
+}
+
+const drawCar = () => {
+    if(car.picLoaded) {
+        car.angle += 0.2;
+        drawBitmapCenteredAtLocationWithRotation(carPic, car.x, car.y, car.angle);
+    }
+}
+
 const drawEverything = () => {
     //Clears the canvas with black
     drawRect(0, 0, canvas.width, canvas.height, 'black');
@@ -194,6 +226,6 @@ const drawEverything = () => {
     drawTracks();
 
     //playerCar
-    drawCircle(car.x, car.y, car.radius, 'white');
+    drawCar();
 };
 //END DRAW CALLS*************************
