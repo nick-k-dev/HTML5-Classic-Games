@@ -22,7 +22,10 @@ const TRACK = Object.freeze({
     HEIGHT: 40,
     GAP: 1,
     COLUMNS: 20,
-    ROWS: 15
+    ROWS: 15,
+    ROAD: 0,
+    WALL: 1,
+    PLAYER: 2
 });
 
 //20 by 15 array grid to visually represent the map
@@ -41,7 +44,7 @@ let	tracksGrid =
     1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	1,
     1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,
     1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,
-    1,	0,	0,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,
+    1,	0,	2,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,
     1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1
 ];
 
@@ -49,7 +52,7 @@ const drawTracks = () => {
     for(let column = 0; column < TRACK.COLUMNS; ++column){
         for(let row = 0; row < TRACK.ROWS; ++row){
             //only draw if the track is visible(holds a 1 at the provided index)
-            if(isTrackAtTileCoordinateVisible(column, row)){
+            if(isWallAtTileCoordinate(column, row)){
                 let trackLeftEdgeX = column * TRACK.WIDTH;
                 let trackTopEdgeY = row * TRACK.HEIGHT;
                 //draw a blue rectangle at that position, leaving a small margin for GAP
@@ -72,13 +75,13 @@ const convertColumnRowToIndex = (column, row) => {
 };
 
 //will return true if 1(track visible) false if 0(no track)
-const isTrackAtTileCoordinateVisible = (tileColumn, tileRow) => {
+const isWallAtTileCoordinate = (tileColumn, tileRow) => {
     const index =convertColumnRowToIndex(tileColumn, tileRow);
     //check if the track in the array index is visible(which is represented by 1)
-    return (tracksGrid[index] === 1);
+    return (tracksGrid[index] === TRACK.WALL);
 };
 
-const bounceOffTrackAtPixelCoordinate = (pixelX, pixelY) => {
+const checkForTrackAtPixelCoordinate = (pixelX, pixelY) => {
     const column = Math.floor(pixelX / TRACK.WIDTH);
     const row = Math.floor(pixelY / TRACK.HEIGHT);
 
@@ -89,67 +92,58 @@ const bounceOffTrackAtPixelCoordinate = (pixelX, pixelY) => {
 
     const index = convertColumnRowToIndex(column, row);
 
-    //We hit a visible track so handle it
-    if(tracksGrid[index] === 1) {
-        //check the position of the car a frame earlier
-        const previousCarX = car.x-car.speedX;
-        const previousCarY = car.y-car.speedY;
-        const previousColumn = Math.floor(previousCarX / TRACK.WIDTH);
-        const previousRow = Math.floor(previousCarY / TRACK.HEIGHT);
-
-        let bothTestsFailed = true;
-
-        //we came in from the side because we aren't in the same column.
-        if(previousColumn != column){
-            const adjacentTrackIndex = convertColumnRowToIndex(previousColumn, previousRow);
-            //make sure the side we want to reflect off of isn't blocked by another track
-            if(tracksGrid[adjacentTrackIndex] != 1){
-                car.speedX *= -1;
-                bothTestsFailed = false;
-            }
-        }
-
-        //we came in vertically because we aren't in the same row.
-        if(previousRow != row) {
-            const adjacentTrackindex = convertColumnRowToIndex(previousColumn, previousRow);
-            //make sure the side we want to refelct off isn't blocked by another track
-            if(tracksGrid[adjacentTrackindex] != 1){
-                car.speedY *= -1;
-                bothTestsFailed = false;
-            }
-        }
-
-        //handle both tests failing We came from an inside corner where we had adjacent tracks flip both to avoid
-        //going into that next location
-        if(bothTestsFailed){
-            car.speedX *= -1;
-            car.speedY *= -1;
-        }
-
-    }
+    //We are on the road so return
+    return (tracksGrid[index] === TRACK.ROAD);
 };
-
-
 //END TRACK LOGIC AND ARRAY FUNCTIONS****************
 
 
 //CAR LOGIC***********************
+const  CAR = Object.freeze({
+    GROUNDSPEED_DECAY_MULT: 0.94,
+    DRIVE_POWER: 0.5,
+    REVERSE_POWER: 0.2,
+    TURN_RATE: 0.03 * Math.PI,
+    MIN_TURN_SPEED: 0.5
+});
+
 let car = {
+    width: 20,
     x: 75,
     y: 75,
     speed: 0,
-    angle: 0,
+    angle: -0.5 * Math.PI,
     picLoaded:false,
     move: function() {
         //move the car
-        this.x += Math.cos(this.angle) * this.speed;
-        this.y += Math.sin(this.angle) * this.speed;
+        const nextX = this.x + Math.cos(this.angle) * this.speed;
+        const nextY = this.y + Math.sin(this.angle) * this.speed;
+
+        if(checkForTrackAtPixelCoordinate(nextX, nextY)){
+            this.x = nextX;
+            this.y = nextY;
+        }
+        else{
+            this.speed *= -0.5;
+        }
     },
     resetPos: function(){
-        this.x = canvas.width / 2;
-        this.y = canvas.height / 2;
-        this.speed *= -1;
-        this.speed *= -1;
+        let row = -1;
+        let column = -1;
+        for(let i = 0; i < tracksGrid.length; ++i){
+            if(tracksGrid[i] == TRACK.PLAYER){
+                row = Math.floor(i/TRACK.COLUMNS);
+                column = i % TRACK.COLUMNS;
+                //We want the code to think this spot is a road again not the player
+                //So we reset back to 0 instead of the 2 to find the player
+                tracksGrid[i] = TRACK.ROAD;
+                break;
+            }
+        }
+        if(row > 0 && column > 0){
+            car.x = column * TRACK.WIDTH + 0.5 * TRACK.WIDTH;
+            car.y = row * TRACK.HEIGHT + 0.5 * TRACK.HEIGHT;
+        }
     }
 };
 
@@ -162,20 +156,23 @@ const resetGame = () => {
 
 
 const moveEverything = () => {
-    bounceOffTrackAtPixelCoordinate(car.x, car.y);
     if(keyHeld.gas) {
-        car.speed += 0.5;
+        car.speed += CAR.DRIVE_POWER;
     }
     if(keyHeld.reverse){
-        car.speed -= 0.5;
+        car.speed -= CAR.REVERSE_POWER;
     }
-    if(keyHeld.left){
-        car.angle += -0.03 * Math.PI;
+    if(Math.abs(car.speed) >= CAR.MIN_TURN_SPEED){
+        if(keyHeld.left){
+            car.angle += -CAR.TURN_RATE;
+        }
+        if(keyHeld.right){
+            car.angle += CAR.TURN_RATE;
+        }
     }
-    if(keyHeld.right){
-        car.angle += 0.03 * Math.PI;
-    }
+    
     car.move();
+    car.speed *= CAR.GROUNDSPEED_DECAY_MULT;
 };
 
 //END CAR LOGIC***********************
@@ -183,37 +180,28 @@ const moveEverything = () => {
 
 
 //********LISTENER CALLBACKS
-const keyPressed = (evt) => {
-    
-    if(evt.keyCode === KEY.UP_ARROW) {
-        keyHeld.gas = true;
+const setKeyHoldState = (currentKey, pressedState) => {
+    if(currentKey === KEY.UP_ARROW) {
+        keyHeld.gas = pressedState;
     }
-    if(evt.keyCode === KEY.DOWN_ARROW){
-        keyHeld.reverse = true;
+    if(currentKey === KEY.DOWN_ARROW){
+        keyHeld.reverse = pressedState;
     }
-    if(evt.keyCode === KEY.LEFT_ARROW){
-        keyHeld.left = true;
+    if(currentKey === KEY.LEFT_ARROW){
+        keyHeld.left = pressedState;
     }
-    if(evt.keyCode === KEY.RIGHT_ARROW){
-        keyHeld.right = true;
+    if(currentKey === KEY.RIGHT_ARROW){
+        keyHeld.right = pressedState;
     }
+}
 
+const keyPressed = (evt) => {
+    setKeyHoldState(evt.keyCode, true);
     evt.preventDefault();
 }
 
 const keyReleased = (evt) => {
-    if(evt.keyCode === KEY.UP_ARROW) {
-        keyHeld.gas = false;
-    }
-    if(evt.keyCode === KEY.DOWN_ARROW){
-        keyHeld.reverse = false;
-    }
-    if(evt.keyCode === KEY.LEFT_ARROW){
-        keyHeld.left = false;
-    }
-    if(evt.keyCode === KEY.RIGHT_ARROW){
-        keyHeld.right = false;
-    }
+   setKeyHoldState(evt.keyCode, false);
 }
 //*********END LISTENER CALLBAKCKS
 
