@@ -63,12 +63,6 @@ let car = {
     }
 };
 
-let carPic = document.createElement('img');
-
 const carInit = () => {
-    carPic.onload = function() {
-        car.picLoaded = true;//don't display image until loaded.
-    }
-    carPic.src = 'player1.png';
     car.resetPos();
 };

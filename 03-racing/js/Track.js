@@ -2,7 +2,6 @@
 const TRACK = Object.freeze({
     WIDTH: 40,
     HEIGHT: 40,
-    GAP: 1,
     COLUMNS: 20,
     ROWS: 15,
     ROAD: 0,
@@ -33,13 +32,14 @@ let	tracksGrid =
 const drawTracks = () => {
     for(let column = 0; column < TRACK.COLUMNS; ++column){
         for(let row = 0; row < TRACK.ROWS; ++row){
-            //only draw if the track is visible(holds a 1 at the provided index)
+            let gridLeftEdgeX = column * TRACK.WIDTH;
+            let gridTopEdgeY = row * TRACK.HEIGHT;
             if(isWallAtTileCoordinate(column, row)){
-                let trackLeftEdgeX = column * TRACK.WIDTH;
-                let trackTopEdgeY = row * TRACK.HEIGHT;
-                //draw a blue rectangle at that position, leaving a small margin for GAP
-                drawRect(trackLeftEdgeX, trackTopEdgeY, TRACK.WIDTH - TRACK.GAP, TRACK.HEIGHT - TRACK.GAP, 'blue');
-            }//end if
+                canvasContext.drawImage(wallPic, gridLeftEdgeX, gridTopEdgeY);
+            }
+            else {
+                canvasContext.drawImage(roadPic, gridLeftEdgeX, gridTopEdgeY);
+            }
         }//end for
     }//end for
 };//end drawTracks

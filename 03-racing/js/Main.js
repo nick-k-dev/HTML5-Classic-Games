@@ -3,14 +3,19 @@ const moveEverything = () => {
 };
 
 const drawEverything = () => {
-    //Clears the canvas with black
-    drawRect(0, 0, canvas.width, canvas.height, 'black');
-
     //draw the tracks
     drawTracks();
 
     //playerCar
     drawCar();
+};
+
+const loadingFinishedStartGame = () => {
+    const framesPerSecond = 30;
+    setInterval(()=>{
+        moveEverything();
+        drawEverything();
+    }, 1000/framesPerSecond);
 };
 
 //CANVAS, EVENTS AND ONLOAD SETUP********************
@@ -23,11 +28,7 @@ window.onload = () => {
     //call initialization functions
     carInit();
     initInput();
-
-    const framesPerSecond = 30;
-    setInterval(()=>{
-        moveEverything();
-        drawEverything();
-    }, 1000/framesPerSecond);
+    loadImages();
+    
 };
 //END CANVAS AND ONLOAD SETUP********************
