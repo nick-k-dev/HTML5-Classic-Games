@@ -3,45 +3,42 @@ const KEY = Object.freeze({
     LEFT_ARROW: 37,
     UP_ARROW: 38,
     RIGHT_ARROW: 39,
-    DOWN_ARROW: 40
+    DOWN_ARROW: 40,
+    W: 87,
+    A: 65,
+    S: 83,
+    D: 68
 });
-
-let keyHeld = {
-    gas: false,
-    reverse: false,
-    left: false,
-    right: false
-};
-
 //END KEYBOARD CONSTANTS AND CHECKS*****************
 
 //********LISTENER CALLBACKS
 const initInput = () => {
     document.addEventListener('keydown', keyPressed);
     document.addEventListener('keyup', keyReleased);
+    player1.setupControls(KEY.UP_ARROW, KEY.DOWN_ARROW, KEY.LEFT_ARROW, KEY.RIGHT_ARROW);
 };
 
-const setKeyHoldState = (currentKey, pressedState) => {
-    if(currentKey === KEY.UP_ARROW) {
-        keyHeld.gas = pressedState;
+const setKeyHoldState = (currentKey, car, pressedState) => {
+    if(currentKey === car.keyForGas) {
+        car.keyHeld.gas = pressedState;
     }
-    if(currentKey === KEY.DOWN_ARROW){
-        keyHeld.reverse = pressedState;
+    if(currentKey === car.keyForReverse){
+        car.keyHeld.reverse = pressedState;
     }
-    if(currentKey === KEY.LEFT_ARROW){
-        keyHeld.left = pressedState;
+    if(currentKey === car.keyForLeft){
+        car.keyHeld.left = pressedState;
     }
-    if(currentKey === KEY.RIGHT_ARROW){
-        keyHeld.right = pressedState;
+    if(currentKey === car.keyForRight){
+        car.keyHeld.right = pressedState;
     }
 }
 
 const keyPressed = (evt) => {
-    setKeyHoldState(evt.keyCode, true);
+    setKeyHoldState(evt.keyCode, player1, true);
     evt.preventDefault();
 }
 
 const keyReleased = (evt) => {
-   setKeyHoldState(evt.keyCode, false);
+   setKeyHoldState(evt.keyCode, player1, false);
 }
 //*********END LISTENER CALLBAKCKS

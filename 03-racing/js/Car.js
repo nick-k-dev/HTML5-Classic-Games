@@ -7,25 +7,39 @@ const  CAR = Object.freeze({
     MIN_TURN_SPEED: 0.5
 });
 
-let car = {
-    width: 20,
-    x: 75,
-    y: 75,
-    speed: 0,
-    angle: -0.5 * Math.PI,
-    picLoaded:false,
-    move: function() {
-        if(keyHeld.gas) {
+class Car {
+    constructor(){
+        this.x = 75;
+        this.y = 75;
+        this.speed = 0;
+        this.angle = -0.5 * Math.PI;
+        this.keyHeld = {
+            gas: false,
+            reverse: false,
+            left: false,
+            right: false
+        };
+    }
+
+    setupControls(forwardKey, backKey, leftKey, rightKey) {
+        this.keyForGas = forwardKey;
+        this.keyForReverse = backKey;
+        this.keyForLeft = leftKey;
+        this.keyForRight = rightKey;
+    }
+
+    move() {
+        if(this.keyHeld.gas) {
             this.speed += CAR.DRIVE_POWER;
         }
-        if(keyHeld.reverse){
+        if(this.keyHeld.reverse){
             this.speed -= CAR.REVERSE_POWER;
         }
-        if(Math.abs(car.speed) >= CAR.MIN_TURN_SPEED){
-            if(keyHeld.left){
+        if(Math.abs(this.speed) >= CAR.MIN_TURN_SPEED){
+            if(this.keyHeld.left){
                 this.angle += -CAR.TURN_RATE;
             }
-            if(keyHeld.right){
+            if(this.keyHeld.right){
                 this.angle += CAR.TURN_RATE;
             }
         }
@@ -41,13 +55,14 @@ let car = {
             this.speed *= -0.5;
         }
 
-        car.speed *= CAR.GROUNDSPEED_DECAY_MULT;
-    },
-    resetPos: function(){
+        this.speed *= CAR.GROUNDSPEED_DECAY_MULT;
+    }
+
+    resetPos() {
         let row = -1;
         let column = -1;
         for(let i = 0; i < tracksGrid.length; ++i){
-            if(tracksGrid[i] == TRACK.PLAYER){
+            if(tracksGrid[i] === TRACK.PLAYER){
                 row = Math.floor(i/TRACK.COLUMNS);
                 column = i % TRACK.COLUMNS;
                 //We want the code to think this spot is a road again not the player
@@ -57,12 +72,12 @@ let car = {
             }
         }
         if(row > 0 && column > 0){
-            car.x = column * TRACK.WIDTH + 0.5 * TRACK.WIDTH;
-            car.y = row * TRACK.HEIGHT + 0.5 * TRACK.HEIGHT;
+            this.x = column * TRACK.WIDTH + 0.5 * TRACK.WIDTH;
+            this.y = row * TRACK.HEIGHT + 0.5 * TRACK.HEIGHT;
         }
     }
-};
 
-const carInit = () => {
-    car.resetPos();
-};
+    init() {
+        this.resetPos();
+    }
+}

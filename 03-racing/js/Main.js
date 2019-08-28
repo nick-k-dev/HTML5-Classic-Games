@@ -1,5 +1,7 @@
+let player1 = new Car();
+
 const moveEverything = () => {
-    car.move();
+    player1.move();
 };
 
 const drawEverything = () => {
@@ -7,7 +9,7 @@ const drawEverything = () => {
     drawTracks();
 
     //playerCar
-    drawCar();
+    drawCar(player1);
 };
 
 const loadingFinishedStartGame = () => {
@@ -26,7 +28,7 @@ window.onload = () => {
     canvasContext = canvas.getContext('2d');
 
     //call initialization functions
-    carInit();
+    player1.init();
     initInput();
     loadImages();
     
