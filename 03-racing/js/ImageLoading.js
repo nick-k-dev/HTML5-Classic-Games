@@ -1,23 +1,37 @@
 let carPic = document.createElement('img');
-let roadPic = document.createElement('img');
-let wallPic = document.createElement('img');
 
-const images = Object.freeze([
-    [carPic, 'player1.png'],
-    [roadPic, 'track_road.png'],
-    [wallPic, 'track_wall.png']
+const imageList = Object.freeze([
+    {varName: carPic, fileName: 'player1.png'},
+    
+    {trackType: TRACK.ROAD, fileName: 'track_road.png'},
+    {trackType: TRACK.WALL, fileName: 'track_wall.png'},
+    {trackType: TRACK.GOAL, fileName: 'track_goal.png'},
+    {trackType: TRACK.TREE, fileName: 'track_tree.png'},
+    {trackType: TRACK.FLAG, fileName: 'track_flag.png'}
 ]);
 
-let filesLeftToLoad = images.length;
+let trackPics = [];
+
+let filesLeftToLoad = imageList.length;
 
 const beginLoadingImage = (imgObject, fileName) => {
     imgObject.onload = countLoadedImageAndLaunchIfReady;
     imgObject.src = 'img/' + fileName;
 };
 
+const loadImageForTrack = (trackType, fileName) => {
+    trackPics[trackType] = document.createElement('img');
+    beginLoadingImage(trackPics[trackType], fileName);
+};
+
 const loadImages = () => {
-    images.forEach(function(element){
-        beginLoadingImage(element[0], element[1]);
+    imageList.forEach(function(image){
+        if(image.trackType != undefined){
+            loadImageForTrack(image.trackType, image.fileName);
+        }
+        else {
+            beginLoadingImage(image.varName, image.fileName);
+        }
     });
 };
 

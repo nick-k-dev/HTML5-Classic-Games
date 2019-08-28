@@ -6,41 +6,45 @@ const TRACK = Object.freeze({
     ROWS: 15,
     ROAD: 0,
     WALL: 1,
-    PLAYER: 2
+    PLAYER: 2,
+    GOAL: 3,
+    TREE: 4,
+    FLAG: 5
 });
 
 //20 by 15 array grid to visually represent the map
 let	tracksGrid =
 [	
-    1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,
-    1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,
-    1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	1,	1,	1,
-    1,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,
-    1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,
-    1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	1,
+    1,	1,	5,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	4,	4,	4,
+    1,	0,	3,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	4,	4,	4,
+    1,	0,	3,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	1,	4,	4,
+    1,	0,	3,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,
+    1,	0,	3,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,
+    1,	1,	5,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	5,	0,	0,	0,	0,	0,	1,
     1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	1,	1,
     1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	1,	1,
     1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	1,	1,
-    1,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	1,
-    1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	1,
+    1,	0,	0,	0,	5,	1,	1,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	1,
+    1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	5,	0,	0,	0,	0,	0,	0,	1,
     1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,
-    1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,
-    1,	0,	2,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,
-    1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1
+    1,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	4,	4,
+    1,	0,	2,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	1,	4,	4,	4,
+    1,	1,	1,	1,	1,	4,	4,	4,	1,	1,	1,	1,	1,	1,	1,	1,	1,	4,	4,	4
 ];
 
 const drawTracks = () => {
-    for(let column = 0; column < TRACK.COLUMNS; ++column){
-        for(let row = 0; row < TRACK.ROWS; ++row){
-            let gridLeftEdgeX = column * TRACK.WIDTH;
-            let gridTopEdgeY = row * TRACK.HEIGHT;
-            if(isWallAtTileCoordinate(column, row)){
-                canvasContext.drawImage(wallPic, gridLeftEdgeX, gridTopEdgeY);
-            }
-            else {
-                canvasContext.drawImage(roadPic, gridLeftEdgeX, gridTopEdgeY);
-            }
+    let trackIndex = 0;
+    let gridLeftEdgeX = 0;
+    let gridTopEdgeY = 0;
+    for(let row = 0; row < TRACK.ROWS; ++row){
+        gridLeftEdgeX = 0;
+        for(let column = 0; column < TRACK.COLUMNS; ++column){
+            let type = tracksGrid[trackIndex];
+            canvasContext.drawImage(trackPics[type], gridLeftEdgeX, gridTopEdgeY);
+            ++trackIndex;
+            gridLeftEdgeX += TRACK.WIDTH;
         }//end for
+        gridTopEdgeY += TRACK.HEIGHT;
     }//end for
 };//end drawTracks
 
@@ -57,10 +61,10 @@ const convertColumnRowToIndex = (column, row) => {
 };
 
 //will return true if 1(track visible) false if 0(no track)
-const isWallAtTileCoordinate = (tileColumn, tileRow) => {
-    const index =convertColumnRowToIndex(tileColumn, tileRow);
+const getTileTypeNumber = (tileColumn, tileRow) => {
+    const index = convertColumnRowToIndex(tileColumn, tileRow);
     //check if the track in the array index is visible(which is represented by 1)
-    return (tracksGrid[index] === TRACK.WALL);
+    return tracksGrid[index];
 };
 
 const checkForTrackAtPixelCoordinate = (pixelX, pixelY) => {
