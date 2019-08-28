@@ -38,6 +38,15 @@ const keyPressed = (evt) => {
     Object.keys(players).forEach(function(p){
         setKeyHoldState(evt.keyCode, players[p], true);
     });
+    if(evt.keyCode === 13){
+        displayStartScreen = false;
+    }
+    if(evt.keyCode === 27){
+        displayStartScreen = true;
+        Object.keys(players).forEach(function(p){
+            players[p].resetPos();
+        });
+    }
     evt.preventDefault();
 }
 

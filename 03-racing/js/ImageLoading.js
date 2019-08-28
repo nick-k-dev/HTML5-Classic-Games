@@ -1,9 +1,11 @@
 let carPic1 = document.createElement('img');
 let carPic2 = document.createElement('img');
+let menuPic = document.createElement('img');
 
 const imageList = Object.freeze([
     {varName: carPic1, fileName: 'player1.png'},
     {varName: carPic2, fileName: 'player2.png'},
+    {varName: menuPic, fileName: 'mr-bean.png'},
 
     {trackType: TRACK.ROAD, fileName: 'track_road.png'},
     {trackType: TRACK.WALL, fileName: 'track_wall.png'},

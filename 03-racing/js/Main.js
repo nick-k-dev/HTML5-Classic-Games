@@ -1,3 +1,5 @@
+let displayStartScreen = true;
+
 let players = {
     player1: new Car(),
     player2: new Car()
@@ -10,13 +12,18 @@ const moveEverything = () => {
 };
 
 const drawEverything = () => {
+    if(displayStartScreen){
+        drawStartScreen(menuPic);
+    }
+    else {
     //draw the tracks
     drawTracks();
-
     //playerCar
     Object.keys(players).forEach(function(p) {
         drawCar(players[p]);
     });
+    }
+   
 };
 
 const loadingFinishedStartGame = () => {
