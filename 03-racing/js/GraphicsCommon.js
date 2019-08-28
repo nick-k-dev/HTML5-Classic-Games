@@ -20,9 +20,7 @@ const drawBitmapCenteredAtLocationWithRotation = (graphic, x, y, angle) => {
     canvasContext.restore();
 }
 
-const drawCar = () => {
-    if(car.picLoaded) {
-        drawBitmapCenteredAtLocationWithRotation(carPic, car.x, car.y, car.angle);
-    }
+const drawCar = (car) => {
+    drawBitmapCenteredAtLocationWithRotation(car.bitMap, car.x, car.y, car.angle);
 }
 //END DRAW CALLS*************************
