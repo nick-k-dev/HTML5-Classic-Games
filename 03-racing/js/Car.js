@@ -77,7 +77,8 @@ class Car {
         }
     }
 
-    init() {
+    init(graphic) {
+        this.bitMap = graphic;
         this.resetPos();
     }
 }

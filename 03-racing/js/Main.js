@@ -1,7 +1,12 @@
-let player1 = new Car();
+let players = {
+    player1: new Car(),
+    player2: new Car()
+};
 
 const moveEverything = () => {
-    player1.move();
+    Object.keys(players).forEach(function(p) {
+        players[p].move();
+    });
 };
 
 const drawEverything = () => {
@@ -9,7 +14,9 @@ const drawEverything = () => {
     drawTracks();
 
     //playerCar
-    drawCar(player1);
+    Object.keys(players).forEach(function(p) {
+        drawCar(players[p]);
+    });
 };
 
 const loadingFinishedStartGame = () => {
@@ -28,7 +35,8 @@ window.onload = () => {
     canvasContext = canvas.getContext('2d');
 
     //call initialization functions
-    player1.init();
+    players.player2.init(carPic2);
+    players.player1.init(carPic1);
     initInput();
     loadImages();
     

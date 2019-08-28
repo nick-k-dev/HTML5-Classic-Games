@@ -15,7 +15,8 @@ const KEY = Object.freeze({
 const initInput = () => {
     document.addEventListener('keydown', keyPressed);
     document.addEventListener('keyup', keyReleased);
-    player1.setupControls(KEY.UP_ARROW, KEY.DOWN_ARROW, KEY.LEFT_ARROW, KEY.RIGHT_ARROW);
+    players.player1.setupControls(KEY.UP_ARROW, KEY.DOWN_ARROW, KEY.LEFT_ARROW, KEY.RIGHT_ARROW);
+    players.player2.setupControls(KEY.W, KEY.S, KEY.A, KEY.D);
 };
 
 const setKeyHoldState = (currentKey, car, pressedState) => {
@@ -34,11 +35,15 @@ const setKeyHoldState = (currentKey, car, pressedState) => {
 }
 
 const keyPressed = (evt) => {
-    setKeyHoldState(evt.keyCode, player1, true);
+    Object.keys(players).forEach(function(p){
+        setKeyHoldState(evt.keyCode, players[p], true);
+    });
     evt.preventDefault();
 }
 
 const keyReleased = (evt) => {
-   setKeyHoldState(evt.keyCode, player1, false);
+    Object.keys(players).forEach(function(p){
+        setKeyHoldState(evt.keyCode, players[p], false);
+    });
 }
 //*********END LISTENER CALLBAKCKS

@@ -21,6 +21,6 @@ const drawBitmapCenteredAtLocationWithRotation = (graphic, x, y, angle) => {
 }
 
 const drawCar = (car) => {
-    drawBitmapCenteredAtLocationWithRotation(carPic, car.x, car.y, car.angle);
+    drawBitmapCenteredAtLocationWithRotation(car.bitMap, car.x, car.y, car.angle);
 }
 //END DRAW CALLS*************************
