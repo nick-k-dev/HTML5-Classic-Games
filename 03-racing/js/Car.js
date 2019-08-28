@@ -11,8 +11,6 @@ class Car {
     constructor(){
         this.x = 75;
         this.y = 75;
-        this.speed = 0;
-        this.angle = -0.5 * Math.PI;
         this.keyHeld = {
             gas: false,
             reverse: false,
@@ -47,9 +45,16 @@ class Car {
         const nextX = this.x + Math.cos(this.angle) * this.speed;
         const nextY = this.y + Math.sin(this.angle) * this.speed;
 
-        if(checkForTrackAtPixelCoordinate(nextX, nextY)){
+        const currentCollisionType = getTrackAtPixelCoordinate(nextX, nextY);
+
+        if(currentCollisionType === TRACK.ROAD){
             this.x = nextX;
             this.y = nextY;
+        }
+        else if(currentCollisionType === TRACK.GOAL){
+            document.getElementById('debugText').innerHTML = this.name + " won the race!";
+            players.player1.resetPos();
+            players.player2.resetPos();
         }
         else{
             this.speed *= -0.5;
@@ -59,26 +64,29 @@ class Car {
     }
 
     resetPos() {
-        let row = -1;
-        let column = -1;
-        for(let i = 0; i < tracksGrid.length; ++i){
-            if(tracksGrid[i] === TRACK.PLAYER){
-                row = Math.floor(i/TRACK.COLUMNS);
-                column = i % TRACK.COLUMNS;
-                //We want the code to think this spot is a road again not the player
-                //So we reset back to 0 instead of the 2 to find the player
-                tracksGrid[i] = TRACK.ROAD;
-                break;
-            }
-        }
-        if(row > 0 && column > 0){
-            this.x = column * TRACK.WIDTH + 0.5 * TRACK.WIDTH;
-            this.y = row * TRACK.HEIGHT + 0.5 * TRACK.HEIGHT;
-        }
+        this.speed = 0;
+        this.angle = -0.5 * Math.PI;
+        if(this.homeX === undefined){
+            for(let i = 0; i < tracksGrid.length; ++i){
+                if(tracksGrid[i] === TRACK.PLAYER){
+                    let row = Math.floor(i/TRACK.COLUMNS);
+                    let column = i % TRACK.COLUMNS;
+                    this.homeX = column * TRACK.WIDTH + 0.5 * TRACK.WIDTH;
+                    this.homeY = row * TRACK.HEIGHT + 0.5 * TRACK.HEIGHT;
+                    //We want the code to think this spot is a road again not the player
+                    //So we reset back to 0 instead of the 2 to find the player
+                    tracksGrid[i] = TRACK.ROAD;
+                    break;
+                }
+            }//end for
+        }//end if
+        this.x = this.homeX;
+        this.y = this.homeY;
     }
 
-    init(graphic) {
+    init(graphic, carName) {
         this.bitMap = graphic;
+        this.name = carName;
         this.resetPos();
     }
 }

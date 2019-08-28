@@ -67,18 +67,16 @@ const getTileTypeNumber = (tileColumn, tileRow) => {
     return tracksGrid[index];
 };
 
-const checkForTrackAtPixelCoordinate = (pixelX, pixelY) => {
+const getTrackAtPixelCoordinate = (pixelX, pixelY) => {
     const column = Math.floor(pixelX / TRACK.WIDTH);
     const row = Math.floor(pixelY / TRACK.HEIGHT);
 
-    //return out of function, we aren't within the track array bounds
+    //return out of function, we aren't within the track array bounds so act as a wall
     if(column < 0 || column >= TRACK.COLUMNS || row < 0 || row >= TRACK.ROWS) {
-        return;
+        return TRACK.WALL;
     }
 
     const index = convertColumnRowToIndex(column, row);
-
-    //We are on the road so return
-    return (tracksGrid[index] === TRACK.ROAD);
+    return tracksGrid[index];
 };
 //END TRACK LOGIC AND ARRAY FUNCTIONS****************

@@ -35,8 +35,8 @@ window.onload = () => {
     canvasContext = canvas.getContext('2d');
 
     //call initialization functions
-    players.player2.init(carPic2);
-    players.player1.init(carPic1);
+    players.player2.init(carPic2, "Pink Car");
+    players.player1.init(carPic1, "Blue Car");
     initInput();
     loadImages();
     
