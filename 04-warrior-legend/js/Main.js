@@ -29,7 +29,7 @@ window.onload = () => {
     canvasContext = canvas.getContext('2d');
 
     //call initialization functions
-    player1.init(playerPic, "Blue Car");
+    player1.init(playerPic, "Randall the dude");
     initInput();
     loadImages();
     

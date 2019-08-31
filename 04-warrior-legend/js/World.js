@@ -73,16 +73,16 @@ const getTileTypeNumber = (tileColumn, tileRow) => {
     return roomGrid[index];
 };
 
-const getTileAtPixelCoordinate = (pixelX, pixelY) => {
+const getTileIndexAtPixelCoordinate = (pixelX, pixelY) => {
     const column = Math.floor(pixelX / TILE.WIDTH);
     const row = Math.floor(pixelY / TILE.HEIGHT);
 
     //return out of function, we aren't within the track array bounds so act as a wall
     if(column < 0 || column >= TILE.COLUMNS || row < 0 || row >= TILE.ROWS) {
-        return TILE.WALL;
+        document.getElementById("debugText").innerHTML = "out of bounds: " + pixelX + "," + pixelY;
+        return undefined;
     }
 
-    const index = convertColumnRowToIndex(column, row);
-    return roomGrid[index];
+    return convertColumnRowToIndex(column, row);
 };
 //END TRACK LOGIC AND ARRAY FUNCTIONS****************
