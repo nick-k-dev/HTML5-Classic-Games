@@ -19,8 +19,4 @@ const drawBitmapCenteredAtLocationWithRotation = (graphic, x, y, angle) => {
     canvasContext.drawImage(graphic, -graphic.width/2, -graphic.height/2); //center, draw
     canvasContext.restore();
 }
-
-const drawPlayer = (player) => {
-    drawBitmapCenteredAtLocationWithRotation(player.bitMap, player.x, player.y, player.angle);
-}
 //END DRAW CALLS*************************

@@ -7,7 +7,8 @@ const KEY = Object.freeze({
     W: 87,
     A: 65,
     S: 83,
-    D: 68
+    D: 68,
+    SPACE_BAR: 32
 });
 //END KEYBOARD CONSTANTS AND CHECKS*****************
 
@@ -15,15 +16,12 @@ const KEY = Object.freeze({
 const initInput = () => {
     document.addEventListener('keydown', keyPressed);
     document.addEventListener('keyup', keyReleased);
-    player1.setupControls(KEY.UP_ARROW, KEY.DOWN_ARROW, KEY.LEFT_ARROW, KEY.RIGHT_ARROW);
+    player1.setupControls(KEY.UP_ARROW, KEY.LEFT_ARROW, KEY.RIGHT_ARROW, KEY.SPACE_BAR);
 };
 
 const setKeyHoldState = (currentKey, player, pressedState) => {
     if(currentKey === player.keyForGas) {
         player.keyHeld.gas = pressedState;
-    }
-    if(currentKey === player.keyForReverse){
-        player.keyHeld.reverse = pressedState;
     }
     if(currentKey === player.keyForLeft){
         player.keyHeld.left = pressedState;
@@ -34,6 +32,9 @@ const setKeyHoldState = (currentKey, player, pressedState) => {
 }
 
 const keyPressed = (evt) => {
+    if(evt.keyCode === player1.keyForShotFiring){
+        player1.cannonFire();
+    }
     setKeyHoldState(evt.keyCode, player1, true);
     evt.preventDefault();
 }

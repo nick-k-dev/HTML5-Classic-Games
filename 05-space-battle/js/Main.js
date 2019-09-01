@@ -9,7 +9,7 @@ const drawEverything = () => {
     drawRect(0,0,canvas.width,canvas.height,'black');
 
     //playerCar
-    drawPlayer(player1);
+    player1.draw();
 };
 
 const loadingFinishedStartGame = () => {
