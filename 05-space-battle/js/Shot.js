@@ -26,6 +26,13 @@ class Shot extends Actor {
         }
     }
 
+    hasHit(enemy) {
+        if(this.life <= 0){
+            return false;
+        }
+        return enemy.hasCollided(this.x, this.y);
+    }
+
     move() {
         if(this.life > 0){
             super.move();

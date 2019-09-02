@@ -49,6 +49,18 @@ class Player extends Actor {
         }
     }
 
+    checkCollision(enemy) {
+        if(enemy.hasCollided(this.x, this.y)){
+            this.reset();
+            document.getElementById('debugText').innerHTML = 'Player Crashed!';
+        }
+        if(this.shot.hasHit(enemy)) {
+            enemy.reset();
+            this.shot.reset();
+            document.getElementById('debugText').innerHTML = 'Enemy Blasted!';
+        }
+    }
+
     reset() {
         super.reset();
         this.angle = -0.5 * Math.PI;

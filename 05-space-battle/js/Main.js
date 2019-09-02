@@ -4,6 +4,7 @@ let enemy1 = new Enemy();
 const moveEverything = () => {
     player1.move();
     enemy1.move();
+    player1.checkCollision(enemy1);
 };
 
 const drawEverything = () => {

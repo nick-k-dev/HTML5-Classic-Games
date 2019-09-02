@@ -1,6 +1,7 @@
 const  ENEMY = Object.freeze({
     SPEED: 1.9,
-    DIRECTION_CHANGE_DELAY: 85
+    DIRECTION_CHANGE_DELAY: 85,
+    COLLISION_RADIUS: 13
 });
 
 class Enemy extends Actor {
@@ -17,6 +18,13 @@ class Enemy extends Actor {
             this.yv = Math.sin(randomAngle) * ENEMY.SPEED;
             this.cyclesUntilDirectionChange = ENEMY.DIRECTION_CHANGE_DELAY;
         }
+    }
+
+    hasCollided(collisionX, collisionY) {
+        const deltaX = collisionX - this.x;
+        const deltaY = collisionY - this.y;
+        const distance = Math.sqrt((deltaX*deltaX) + (deltaY*deltaY)); 
+        return (distance <= ENEMY.COLLISION_RADIUS);
     }
 
     reset() {
