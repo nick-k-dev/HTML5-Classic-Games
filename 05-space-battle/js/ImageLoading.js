@@ -1,7 +1,9 @@
 let playerPic = document.createElement('img');
+let enemyPic = document.createElement('img');
 
 const imageList = Object.freeze([
-    {varName: playerPic, fileName: 'player1.png'}
+    {varName: playerPic, fileName: 'player1.png'},
+    {varName:enemyPic, fileName: 'ufo.png'}
 ]);
 
 let trackPics = [];

@@ -1,7 +1,9 @@
 let player1 = new Player();
+let enemy1 = new Enemy();
 
 const moveEverything = () => {
     player1.move();
+    enemy1.move();
 };
 
 const drawEverything = () => {
@@ -10,6 +12,7 @@ const drawEverything = () => {
 
     //playerCar
     player1.draw();
+    enemy1.draw();
 };
 
 const loadingFinishedStartGame = () => {
@@ -29,6 +32,7 @@ window.onload = () => {
 
     //call initialization functions
     player1.init(playerPic);
+    enemy1.init(enemyPic);
     initInput();
     loadImages();
     

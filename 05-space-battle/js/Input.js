@@ -16,7 +16,8 @@ const KEY = Object.freeze({
 const initInput = () => {
     document.addEventListener('keydown', keyPressed);
     document.addEventListener('keyup', keyReleased);
-    player1.setupControls(KEY.UP_ARROW, KEY.LEFT_ARROW, KEY.RIGHT_ARROW, KEY.SPACE_BAR);
+    //player1.setupControls(KEY.UP_ARROW, KEY.LEFT_ARROW, KEY.RIGHT_ARROW, KEY.SPACE_BAR);
+    player1.setupControls(KEY.W, KEY.A, KEY.D, KEY.SPACE_BAR);
 };
 
 const setKeyHoldState = (currentKey, player, pressedState) => {
