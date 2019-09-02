@@ -31,8 +31,12 @@ class Player extends Actor {
         }
 
         if(this.keyHeld.gas) {
+            this.bitMap = playerThrustPic;
             this.xv += Math.cos(this.angle) * PLAYER.THRUST_POWER;
             this.yv += Math.sin(this.angle) * PLAYER.THRUST_POWER;
+        }
+        else{
+            this.bitMap = playerPic;
         }
 
         super.move();

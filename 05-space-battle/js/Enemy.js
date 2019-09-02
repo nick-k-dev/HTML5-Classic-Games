@@ -1,7 +1,10 @@
 const  ENEMY = Object.freeze({
     SPEED: 1.9,
     DIRECTION_CHANGE_DELAY: 85,
-    COLLISION_RADIUS: 32
+    UFO1_COLLISION_RADIUS: 32,
+    UFO2_COLLISION_RADIUS: 32,
+    UFO3_COLLISION_RADIUS: 32,
+    UFO4_COLLISION_RADIUS: 32
 });
 
 class Enemy extends Actor {
@@ -24,7 +27,7 @@ class Enemy extends Actor {
         const deltaX = collisionX - this.x;
         const deltaY = collisionY - this.y;
         const distance = Math.sqrt((deltaX*deltaX) + (deltaY*deltaY)); 
-        return (distance <= ENEMY.COLLISION_RADIUS);
+        return (distance <= this.COLLISION_RADIUS);
     }
 
     reset() {
@@ -34,8 +37,9 @@ class Enemy extends Actor {
         this.y = Math.random() * canvas.height;
     }
 
-    init(graphic) {
+    init(graphic, collisionRadius) {
         this.bitMap = graphic;
+        this.COLLISION_RADIUS = collisionRadius;
         this.reset();
     }
 

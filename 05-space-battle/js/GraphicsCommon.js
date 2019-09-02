@@ -20,136 +20,102 @@ const drawBitmapCenteredAtLocationWithRotation = (graphic, x, y, angle) => {
     canvasContext.restore();
 }
 
-let stars = [];
-const createStarField = (numStars) => {
+let stars1 = [];
+let stars2 = [];
+let stars3 = [];
+const createStarField = (stars, numStars) => {
     stars[0] = {
         x: 0,
         y: 0,
-        radius: Math.random() * 2 + 1,
-        color: '#555'
+        radius: Math.random() * 2 + 1
     }
-    let quarter = numStars / 4;
     let half = numStars / 2;
-    let threeQaurters = quarter * 3;
     for(let i = 1; i < numStars; ++i){
-        if(i < quarter){
-            stars[i] = {
-                x: Math.random() * -canvas.width,
-                y: Math.random() * -canvas.height,
-                radius: Math.random() * 2 + 1,
-                color: '#555'
-            }
-        }
-        else if(i < half){
+        if(i < half){
             stars[i] = {
                 x: Math.random() * canvas.width,
-                y: Math.random() * -canvas.height,
-                radius: Math.random() * 2 + 1,
-                color: '#555'
-            }
-        }
-        else if(i < threeQaurters){
-            stars[i] = {
-                x: Math.random() * -canvas.width,
                 y: Math.random() * canvas.height,
-                radius: Math.random() * 2 + 1,
-                color: '#555'
+                radius: Math.random() * 2 + 1
             }
         }
         else{
             stars[i] = {
-                x: Math.random() * canvas.width,
+                x: Math.random() * -canvas.width,
                 y: Math.random() * canvas.height,
-                radius: Math.random() * 2 + 1,
-                color: '#555'
+                radius: Math.random() * 2 + 1
             }
         }
     }
 }
 
-const resetSecondHalfStars = () => {
+let stars1FirstHalf = true;
+let stars2FirstHalf = true;
+let stars3FirstHalf = true;
+const resetStars = (stars, whichStars) => {
+
+    let firstHalf = false;
+    if(whichStars === 'stars1') {firstHalf = stars1FirstHalf;}
+    if(whichStars === 'stars2') {firstHalf = stars2FirstHalf;}
+    if(whichStars === 'stars3') {firstHalf = stars3FirstHalf;}
+
     stars[0] = {
         x: 0,
         y: 0,
-        radius: Math.random() * 2 + 1,
-        color: '#555'
+        radius: Math.random() * 2 + 1
     }
-
     let half = stars.length / 2;
-    let threeQuarters = (half / 2) * 3;
-
-    for(let i = half; i < stars.length; ++i){
-        if(i < threeQuarters){
+    if(firstHalf){
+        for(let i = 1; i < half; ++i){
             stars[i] = {
                 x: Math.random() * -canvas.width,
-                y: Math.random() * -canvas.height,
-                radius: Math.random() * 2 + 1,
-                color: '#555'
-            }
-        }
-        else {
-            stars[i] = {
-                x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
-                radius: Math.random() * 2 + 1,
-                color: '#555'
+                radius: Math.random() * 2 + 1
             }
         }
+        if(whichStars === 'stars1') {stars1FirstHalf = false;}
+        if(whichStars === 'stars2') {stars2FirstHalf = false;}
+        if(whichStars === 'stars3') {stars3FirstHalf = false;}
     }
-};
-
-const resetFirstHalfStars = () => {
-    stars[0] = {
-        x: 0,
-        y: 0,
-        radius: Math.random() * 2 + 1,
-        color: '#555'
-    }
-
-    let quarter = stars.length / 4;
-    let half = quarter * 2;
-
-    for(let i = 0; i < half; ++i){
-        if(i < quarter){
+    else{
+        for(let i = half; i < stars.length; ++i){
             stars[i] = {
                 x: Math.random() * -canvas.width,
-                y: Math.random() * -canvas.height,
-                radius: Math.random() * 2 + 1,
-                color: '#555'
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2 + 1
             }
         }
-        else {
-            stars[i] = {
-                x: Math.random() * canvas.width,
-                y: Math.random() * -canvas.height,
-                radius: Math.random() * 2 + 1,
-                color: '#555'
-            }
-        }
+        if(whichStars === 'stars1') {stars1FirstHalf = true;}
+        if(whichStars === 'stars2') {stars2FirstHalf = true;}
+        if(whichStars === 'stars3') {stars3FirstHalf = true;}
     }
-};
+    
+}
 
-let bitToggle = false;
 const drawStarField = () => {
     
-    if((stars[0].x > canvas.width || stars[0].y > canvas.height)){
-        console.log('here');
-        if(bitToggle){
-            console.log('here1');
-            resetFirstHalfStars();
-            bitToggle = (!bitToggle);
-        }
-        else {
-            console.log('here2');
-            resetSecondHalfStars();
-            bitToggle = (!bitToggle);
-        }
+    if((stars1[0].x > canvas.width)){
+        resetStars(stars1, 'stars1');
     }
-    for(let i = 0; i < stars.length; ++i){
-        drawCircle(stars[i].x, stars[i].y, stars[i].radius, stars[i].color);
-        stars[i].x += 2.25
-        stars[i].y += 2.25;
+    for(let i = 0; i < stars1.length; ++i){
+        drawCircle(stars1[i].x, stars1[i].y, stars1[i].radius, '#333');
+        stars1[i].x += 0.15;
     }
     
+    if((stars2[0].x > canvas.width)){
+        resetStars(stars2, 'stars2');
+    }
+    for(let i = 0; i < stars2.length; ++i){
+        drawCircle(stars2[i].x, stars2[i].y, stars2[i].radius, '#555');
+        stars2[i].x += 0.25;
+    }
+
+    if((stars3[0].x > canvas.width)){
+        resetStars(stars3, 'stars3');
+    }
+    for(let i = 0; i < stars3.length; ++i){
+        drawCircle(stars3[i].x, stars3[i].y, stars3[i].radius, '#222');
+        stars3[i].x += 0.15;
+    }
+
 }
 //END DRAW CALLS*************************

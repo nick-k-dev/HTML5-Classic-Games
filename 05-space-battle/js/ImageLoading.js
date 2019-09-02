@@ -1,9 +1,17 @@
 let playerPic = document.createElement('img');
-let enemyPic = document.createElement('img');
+let playerThrustPic = document.createElement('img');
+let enemyPic1 = document.createElement('img');
+let enemyPic2 = document.createElement('img');
+let enemyPic3 = document.createElement('img');
+let enemyPic4 = document.createElement('img');
 
 const imageList = Object.freeze([
     {varName: playerPic, fileName: 'player1.png'},
-    {varName:enemyPic, fileName: 'ufo.png'}
+    {varName: playerThrustPic, fileName: 'player1-thrust.png'},
+    {varName:enemyPic1, fileName: 'ufo1.png'},
+    {varName:enemyPic2, fileName: 'ufo2.png'},
+    {varName:enemyPic3, fileName: 'ufo3.png'},
+    {varName:enemyPic4, fileName: 'ufo4.png'}
 ]);
 
 let trackPics = [];
