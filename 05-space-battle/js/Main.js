@@ -10,8 +10,8 @@ const moveEverything = () => {
 const drawEverything = () => {
     //refresh the screen with black
     drawRect(0,0,canvas.width,canvas.height,'black');
+    drawStarField();
 
-    //playerCar
     player1.draw();
     enemy1.draw();
 };
@@ -36,6 +36,7 @@ window.onload = () => {
     enemy1.init(enemyPic);
     initInput();
     loadImages();
+    createStarField(1000);
     
 };
 //END CANVAS AND ONLOAD SETUP********************

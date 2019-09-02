@@ -1,7 +1,7 @@
 const  ENEMY = Object.freeze({
     SPEED: 1.9,
     DIRECTION_CHANGE_DELAY: 85,
-    COLLISION_RADIUS: 13
+    COLLISION_RADIUS: 32
 });
 
 class Enemy extends Actor {
