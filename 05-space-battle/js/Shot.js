@@ -1,4 +1,3 @@
-//CAR LOGIC***********************
 const  SHOT = Object.freeze({
     SPEED: 6.0,
     LIFE: 30,
@@ -6,20 +5,9 @@ const  SHOT = Object.freeze({
     COLOR: 'white'
 });
 
-class Shot {
+class Shot extends Actor {
     constructor(){
-        this.x = 75;
-        this.y = 75;
-        this.driftX = 0;
-        this.driftY = 0;
-    }
-
-    handleScreenWrap() {
-        if(this.x < 0) {this.x += canvas.width;}
-        else if(this.x > canvas.width) {this.x -= canvas.width;}
-        
-        if(this.y < 0) {this.y += canvas.height;}
-        else if(this.y > canvas.height) {this.y -= canvas.height;}
+        super();
     }
 
     readyToFire() {
@@ -32,7 +20,7 @@ class Shot {
             this.y = ship.y;
 
             this.xv = Math.cos(ship.angle) * SHOT.SPEED + ship.xv;
-            this.yv = Math.sin(ship.angle) * SHOT.SPEED + ship.xy;
+            this.yv = Math.sin(ship.angle) * SHOT.SPEED + ship.yv;
 
             this.life = SHOT.LIFE;
         }
@@ -40,14 +28,13 @@ class Shot {
 
     move() {
         if(this.life > 0){
-            this.x += this.xv;
-            this.y += this.yv;
-            this.handleScreenWrap();
+            super.move();
             --this.life;
         }
     }
 
     reset() {
+        super.reset();
         this.life = 0;
     }
 
