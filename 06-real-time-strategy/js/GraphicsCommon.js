@@ -18,5 +18,12 @@ const drawBitmapCenteredAtLocationWithRotation = (graphic, x, y, angle) => {
     canvasContext.rotate(angle); // sets the rotation
     canvasContext.drawImage(graphic, -graphic.width/2, -graphic.height/2); //center, draw
     canvasContext.restore();
-}
+};
+
+const drawSelectionBox = (mouse, lineColor) => {
+    canvasContext.strokeStyle = lineColor;
+    canvasContext.beginPath();
+    canvasContext.rect(mouse.x1, mouse.y1, mouse.x2-mouse.x1, mouse.y2-mouse.y1);
+    canvasContext.stroke();
+};
 //END DRAW CALLS*************************

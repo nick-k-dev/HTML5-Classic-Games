@@ -3,23 +3,47 @@ let canvasContext;
 const MAX_START_UNITS = 8;
 let playerUnits = [];
 
+const mouse = {
+    x1: 0,
+    x2: 0,
+    y1: 0,
+    y2: 0,
+    isDragging: false
+};
+
 window.onload = () => {
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext('2d');    
 
     //sets up mousemove event listener which calls calculateMousePos
     canvas.addEventListener('mousemove', (evt) => {
-        let mousePos = calculateMousePos(evt);
+        const mousePos = calculateMousePos(evt);
         document.getElementById('debugText').innerHTML = `(${mousePos.x},${mousePos.y})`;
+        if(mouse.isDragging) {
+            mouse.x2 = mousePos.x;
+            mouse.y2 = mousePos.y;
+        }
     });
 
-    canvas.addEventListener('click', (evt) => {
-        let mousePos = calculateMousePos(evt);
-        playerUnits.forEach((unit) => {
-            unit.gotoX = mousePos.x;
-            unit.gotoY = mousePos.y;
-        });
-    })
+    canvas.addEventListener('mousedown', (evt) => {
+        const mousePos = calculateMousePos(evt);
+        mouse.x1 = mousePos.x;
+        mouse.x2 = mousePos.x;
+        mouse.y1 = mousePos.y;
+        mouse.y2 = mousePos.y;
+        mouse.isDragging = true;
+    });
+
+    canvas.addEventListener('mouseup', (evt) => {
+        mouse.isDragging = false;
+    });
+
+    // canvas.addEventListener('click', (evt) => {
+    //     const mousePos = calculateMousePos(evt);
+    //     playerUnits.forEach((unit) => {
+    //         unit.moveNear(mousePos.x, mousePos.y);
+    //     });
+    // });
 
     for(let i = 0; i < MAX_START_UNITS; ++i){
         playerUnits.push(new Unit());
@@ -58,4 +82,7 @@ const drawEverything = () => {
     playerUnits.forEach((unit) => {
         unit.draw();
     });
+    if(mouse.isDragging) {
+        drawSelectionBox(mouse, '#49f');
+    }
 };

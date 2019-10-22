@@ -1,7 +1,8 @@
 UNIT = Object.freeze({
     RADIUS: 5,
     COLOUR: 'white',
-    PIXELS_MOVE_RATE: 2
+    PIXELS_MOVE_RATE: 2,
+    MAX_RAND_DIST_FROM_TARGET: 50
 });
 
 class Unit {
@@ -30,14 +31,19 @@ class Unit {
        let moveY = UNIT.PIXELS_MOVE_RATE * deltaY/distanceToGo;
 
        if(distanceToGo > UNIT.PIXELS_MOVE_RATE) {
-           this.x += moveX;
-           this.y += moveY;
-       }
+            this.x += moveX;
+            this.y += moveY;
+        }
        else {
-           this.x = this.gotoX;
-           this.y = this.gotoY;
-       }
+            this.x = this.gotoX;
+            this.y = this.gotoY;
+        }
     }//end move
+
+    moveNear(mouseX, mouseY) {
+        this.gotoX = mouseX + Math.random() * UNIT.MAX_RAND_DIST_FROM_TARGET;
+        this.gotoY = mouseY + Math.random() * UNIT.MAX_RAND_DIST_FROM_TARGET;
+    }
 
     draw() {
         if(!this.isDead) {
